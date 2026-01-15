@@ -1,0 +1,63 @@
+<div id="yt-eq-modal" class="yt-eq-modal-overlay" style="display:none;">
+    <div class="yt-eq-modal">
+        <div class="yt-eq-modal-header">
+            <span>🎚️ YouTube Equalizer</span>
+            <button id="yt-eq-toggle" title="Toggle EQ">EQ ON</button>
+            <button id="yt-eq-close" title="Close">✖</button>
+        </div>
+        <div class="yt-eq-modal-body">
+            <div class="yt-eq-preset-row">
+                <select id="yt-eq-preset-select" class="yt-eq-preset-select">
+                    <option value="Flat">Flat</option>
+                    <option value="Bass Boost">Bass Boost</option>
+                    <option value="Vocal">Vocal</option>
+                    <option value="Treble Boost">Treble Boost</option>
+                    <option value="Custom">Custom</option>
+                </select>
+                <button id="yt-eq-save-preset"
+                    style="display:none; margin-left:8px;">Save Preset</button>
+                <input id="yt-eq-preset-name" type="text" maxlength="20"
+                    style="display:none; width:102px; margin-left:6px;"
+                    placeholder="preset name">
+            </div>
+            <div class="yt-eq-horizontal">
+                <div class="yt-eq-slider-column">
+                    <label for="eq-band-0">60Hz</label>
+                    <input type="range" min="-12" max="12" value="0" step="1"
+                        id="eq-band-0" orient="vertical">
+                    <span id="eq-value-0">0 dB</span>
+                </div>
+                <div class="yt-eq-slider-column">
+                    <label for="eq-band-1">170Hz</label>
+                    <input type="range" min="-12" max="12" value="0" step="1"
+                        id="eq-band-1" orient="vertical">
+                    <span id="eq-value-1">0 dB</span>
+                </div>
+                <div class="yt-eq-slider-column">
+                    <label for="eq-band-2">350Hz</label>
+                    <input type="range" min="-12" max="12" value="0" step="1"
+                        id="eq-band-2" orient="vertical">
+                    <span id="eq-value-2">0 dB</span>
+                </div>
+                <div class="yt-eq-slider-column">
+                    <label for="eq-band-3">1kHz</label>
+                    <input type="range" min="-12" max="12" value="0" step="1"
+                        id="eq-band-3" orient="vertical">
+                    <span id="eq-value-3">0 dB</span>
+                </div>
+                <div class="yt-eq-slider-column">
+                    <label for="eq-band-4">3.5kHz</label>
+                    <input type="range" min="-12" max="12" value="0" step="1"
+                        id="eq-band-4" orient="vertical">
+                    <span id="eq-value-4">0 dB</span>
+                </div>
+                <div class="yt-eq-slider-column">
+                    <label for="eq-band-5">10kHz</label>
+                    <input type="range" min="-12" max="12" value="0" step="1"
+                        id="eq-band-5" orient="vertical">
+                    <span id="eq-value-5">0 dB</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

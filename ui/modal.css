@@ -1,0 +1,107 @@
+/* Modal overlay */
+.yt-eq-modal-overlay {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(20, 20, 30, 0.6);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Modal container */
+.yt-eq-modal {
+  background: #181824;
+  color: #fff;
+  border-radius: 12px;
+  padding: 28px 32px 18px 32px;
+  min-width: 340px;
+  box-shadow: 0 2px 24px 0 #0f0d30cc;
+}
+.yt-eq-modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+#yt-eq-toggle {
+  background: #161616;
+  color: #eee;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 5px 15px;
+  margin-right: 7px;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+#yt-eq-toggle.active {
+  background: #ff6b81;
+  color: #fff;
+}
+#yt-eq-toggle.off {
+  background: #333;
+  color: #aaa;
+  text-decoration:line-through;
+}
+
+#yt-eq-close {
+  background: none; border: none; color: #aaa;
+  font-size: 18px; cursor: pointer;
+  transition: color .15s;
+  padding: 3px 9px;
+}
+#yt-eq-close:hover { color: #ff6b81; }
+
+.yt-eq-preset-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 6px;
+}
+.yt-eq-preset-select {
+  padding: 5px 13px 6px 5px;
+  background: #191e27;
+  color: #eee;
+  border: 1px solid #374574;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  outline: none;
+  transition: border 0.15s;
+}
+.yt-eq-preset-select:focus {
+  border-color: #ff6b81;
+}
+
+.yt-eq-horizontal {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 12px;
+}
+.yt-eq-slider-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 48px;
+}
+.yt-eq-slider-column label {
+  color: #bbd;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.yt-eq-slider-column input[type="range"] {
+  writing-mode: bt-lr; /* vertical slider (works in most browsers) */
+  -webkit-appearance: slider-vertical;
+  height: 90px;
+  width: 24px;
+  margin: 8px 0;
+  accent-color: #ff6b81;
+}
+.yt-eq-slider-column span {
+  margin-top: 3px;
+  font-size: 13px;
+  color: #aad;
+  min-height: 19px;
+}

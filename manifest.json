@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube EQ",
+  "version": "0.1",
+  "description": "A simple, beautiful equalizer for YouTube videos.",
+  "permissions": ["scripting", "storage"],
+  "host_permissions": ["https://www.youtube.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["content.js"],
+      "css": ["ui/modal.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["ui/*", "audio.js"],
+      "matches": ["https://www.youtube.com/*"]
+    }
+  ]
+}
+
