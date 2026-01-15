@@ -61,7 +61,7 @@ async function setUpEqUI() {
   let ignoreSliderInput = false;
 
   // Apply a preset
-  presetSel.onchange = function() {
+  presetSel.onchange = function () {
     const preset = PRESETS[presetSel.value];
     if (preset) {
       ignoreSliderInput = true;
@@ -73,12 +73,15 @@ async function setUpEqUI() {
       ignoreSliderInput = false;
       saveBtn.style.display = 'none';
       presetNameInput.style.display = 'none';
+      // Persist last used EQ curve when switching presets
+      chrome.storage.local.set({
+        eqLastState: {
+          gains: preset,
+          preset: presetSel.value
+        }
+      });
     }
   };
-
-  // Apply default on modal open (Flat)
-  presetSel.value = 'Flat';
-  presetSel.onchange();
 
   // Sliders logic: update preset to Custom, show save option if changed from preset
   for (let i = 0; i < 6; ++i) {
@@ -102,6 +105,13 @@ async function setUpEqUI() {
           presetNameInput.style.display = '';
           presetNameInput.value = '';
         }
+        // Persist last used EQ curve
+        chrome.storage.local.set({
+          eqLastState: {
+            gains: cur,
+            preset: presetSel.value
+          }
+        });
       }
     };
   }
@@ -111,12 +121,12 @@ async function setUpEqUI() {
     let name = presetNameInput.value.trim();
     if (!name) return alert('Enter a preset name');
     if (PRESETS[name]) return alert('Preset name already exists');
-    const cur=[...Array(6)].map((_,i)=>Number(document.getElementById(`eq-band-${i}`).value));
-    PRESETS[name]=cur;
+    const cur = [...Array(6)].map((_, i) => Number(document.getElementById(`eq-band-${i}`).value));
+    PRESETS[name] = cur;
     const option = document.createElement('option');
     option.value = name;
     option.textContent = name;
-    presetSel.insertBefore(option, presetSel.options[presetSel.options.length-1]); // before Custom
+    presetSel.insertBefore(option, presetSel.options[presetSel.options.length - 1]); // before Custom
     presetSel.value = name;
     saveBtn.style.display = 'none';
     presetNameInput.style.display = 'none';
@@ -125,7 +135,7 @@ async function setUpEqUI() {
   };
 
   // Load user presets from storage
-  chrome.storage.local.get(['eqPresets'], function(data) {
+  chrome.storage.local.get(['eqPresets'], function (data) {
     if (data && data.eqPresets) {
       Object.entries(data.eqPresets).forEach(([name, values]) => {
         if (!PRESETS[name]) {
@@ -133,11 +143,47 @@ async function setUpEqUI() {
           const option = document.createElement('option');
           option.value = name;
           option.textContent = name;
-          presetSel.insertBefore(option, presetSel.options[presetSel.options.length-1]);
-          PRESETS[name]=values;
+          presetSel.insertBefore(option, presetSel.options[presetSel.options.length - 1]);
+          PRESETS[name] = values;
         }
       });
     }
+
+    // After user presets are loaded, restore last used EQ state if any
+    chrome.storage.local.get(['eqLastState'], function (data2) {
+      const state = data2 && data2.eqLastState;
+      if (state && Array.isArray(state.gains) && state.gains.length === 6) {
+        // Restore saved curve
+        ignoreSliderInput = true;
+        const gains = state.gains.map(v => Number(v) || 0);
+        for (let i = 0; i < 6; ++i) {
+          const val = gains[i];
+          document.getElementById(`eq-band-${i}`).value = val;
+          document.getElementById(`eq-value-${i}`).textContent = `${val} dB`;
+          audioMod.setEQGain(i, val);
+        }
+
+        let matched = Object.entries(PRESETS).find(([name, vals]) =>
+          vals.every((v, k) => v === gains[k])
+        );
+        if (matched) {
+          presetSel.value = matched[0];
+          saveBtn.style.display = 'none';
+          presetNameInput.style.display = 'none';
+        } else {
+          presetSel.value = 'Custom';
+          saveBtn.style.display = '';
+          presetNameInput.style.display = '';
+          presetNameInput.value = '';
+        }
+
+        ignoreSliderInput = false;
+      } else {
+        // No saved state yet: fall back to Flat preset once
+        presetSel.value = 'Flat';
+        presetSel.onchange();
+      }
+    });
   });
 
   eqReady = true;

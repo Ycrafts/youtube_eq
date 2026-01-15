@@ -30,9 +30,32 @@ console.log('[YouTube EQ] content.js loaded');
     eqBtn.title = "Open Equalizer";
     // Click handler opens the EQ modal
     eqBtn.onclick = () => {
+      if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.getURL) {
+        console.warn('[YouTube EQ] chrome.runtime.getURL is not available; cannot open modal');
+        return;
+      }
       import(chrome.runtime.getURL('ui/modal.js')).then(mod => mod.openEqModal());
     };
     titleEl.parentNode.insertBefore(eqBtn, titleEl.nextSibling);
+
+    // Automatically set up EQ and apply last used state (if any) without user click
+    const video = document.querySelector('video');
+    if (video && typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+      import(chrome.runtime.getURL('audio.js'))
+        .then(audioMod => {
+          audioMod.setupYouTubeEQ(video);
+          chrome.storage.local.get(['eqLastState'], (data) => {
+            const state = data && data.eqLastState;
+            if (state && Array.isArray(state.gains) && state.gains.length === 6) {
+              const gains = state.gains.map(v => Number(v) || 0);
+              for (let i = 0; i < gains.length; i++) {
+                audioMod.setEQGain(i, gains[i]);
+              }
+            }
+          });
+        })
+        .catch(err => console.warn('[YouTube EQ] Failed to auto-apply EQ:', err));
+    }
   }
 
   waitForTitle();
