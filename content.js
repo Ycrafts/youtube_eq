@@ -1,11 +1,8 @@
-// content.js
-// Injects the EQ button next to the YouTube Subscribe button.
 
 console.log('[YouTube EQ] content.js loaded');
 
 (function injectEqButton() {
   function waitForTitle(retries = 20) {
-    // Wait for up to ~5s for the video title to appear
     const title = document.querySelector('h1.style-scope.ytd-watch-metadata');
     if (title) {
       addEqButton(title);
@@ -28,7 +25,6 @@ console.log('[YouTube EQ] content.js loaded');
     eqBtn.style.cursor = "pointer";
     eqBtn.style.fontSize = "14px";
     eqBtn.title = "Open Equalizer";
-    // Click handler opens the EQ modal
     eqBtn.onclick = () => {
       if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.getURL) {
         console.warn('[YouTube EQ] chrome.runtime.getURL is not available; cannot open modal');
@@ -38,7 +34,6 @@ console.log('[YouTube EQ] content.js loaded');
     };
     titleEl.parentNode.insertBefore(eqBtn, titleEl.nextSibling);
 
-    // Automatically set up EQ and apply last used state (if any) without user click
     const video = document.querySelector('video');
     if (video && typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
       import(chrome.runtime.getURL('audio.js'))

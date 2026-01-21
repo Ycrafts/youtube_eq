@@ -1,5 +1,3 @@
-// ui/modal.js
-// Modal open/close behaviors for the YouTube EQ extension
 let eqReady = false;
 let lastEqState = true;
 let PRESETS = {
@@ -44,7 +42,6 @@ async function setUpEqUI() {
   const audioMod = await import(chrome.runtime.getURL('audio.js'));
   audioMod.setupYouTubeEQ(video);
 
-  // ON/OFF toggle
   const toggleBtn = document.getElementById('yt-eq-toggle');
   let eqState = audioMod.isEQEnabled();
   updateToggleBtn(toggleBtn, eqState);
@@ -54,13 +51,11 @@ async function setUpEqUI() {
     updateToggleBtn(toggleBtn, eqState);
   };
 
-  // Preset dropdown
   const presetSel = document.getElementById('yt-eq-preset-select');
   const saveBtn = document.getElementById('yt-eq-save-preset');
   const presetNameInput = document.getElementById('yt-eq-preset-name');
   let ignoreSliderInput = false;
 
-  // Apply a preset
   presetSel.onchange = function () {
     const preset = PRESETS[presetSel.value];
     if (preset) {
@@ -73,7 +68,6 @@ async function setUpEqUI() {
       ignoreSliderInput = false;
       saveBtn.style.display = 'none';
       presetNameInput.style.display = 'none';
-      // Persist last used EQ curve when switching presets
       chrome.storage.local.set({
         eqLastState: {
           gains: preset,
@@ -83,7 +77,6 @@ async function setUpEqUI() {
     }
   };
 
-  // Sliders logic: update preset to Custom, show save option if changed from preset
   for (let i = 0; i < 6; ++i) {
     const slider = document.getElementById(`eq-band-${i}`);
     const valueDisp = document.getElementById(`eq-value-${i}`);
@@ -91,7 +84,6 @@ async function setUpEqUI() {
       audioMod.setEQGain(i, Number(e.target.value));
       valueDisp.textContent = `${e.target.value} dB`;
       if (!ignoreSliderInput) {
-        // If current slider values don't match any preset
         const cur = [];
         for (let j = 0; j < 6; ++j) cur.push(Number(document.getElementById(`eq-band-${j}`).value));
         let matched = Object.entries(PRESETS).find(([name, vals]) => vals.every((v, k) => v === cur[k]));
@@ -105,7 +97,6 @@ async function setUpEqUI() {
           presetNameInput.style.display = '';
           presetNameInput.value = '';
         }
-        // Persist last used EQ curve
         chrome.storage.local.set({
           eqLastState: {
             gains: cur,
@@ -116,7 +107,6 @@ async function setUpEqUI() {
     };
   }
 
-  // Save custom preset
   saveBtn.onclick = () => {
     let name = presetNameInput.value.trim();
     if (!name) return alert('Enter a preset name');
@@ -130,16 +120,13 @@ async function setUpEqUI() {
     presetSel.value = name;
     saveBtn.style.display = 'none';
     presetNameInput.style.display = 'none';
-    // Persist deep-copy in chrome.storage.local
     chrome.storage.local.set({ eqPresets: PRESETS });
   };
 
-  // Load user presets from storage
   chrome.storage.local.get(['eqPresets'], function (data) {
     if (data && data.eqPresets) {
       Object.entries(data.eqPresets).forEach(([name, values]) => {
         if (!PRESETS[name]) {
-          // Insert loaded preset into dropdown before Custom
           const option = document.createElement('option');
           option.value = name;
           option.textContent = name;
@@ -149,11 +136,10 @@ async function setUpEqUI() {
       });
     }
 
-    // After user presets are loaded, restore last used EQ state if any
     chrome.storage.local.get(['eqLastState'], function (data2) {
       const state = data2 && data2.eqLastState;
       if (state && Array.isArray(state.gains) && state.gains.length === 6) {
-        // Restore saved curve
+        // restore saved curve
         ignoreSliderInput = true;
         const gains = state.gains.map(v => Number(v) || 0);
         for (let i = 0; i < 6; ++i) {
@@ -179,7 +165,6 @@ async function setUpEqUI() {
 
         ignoreSliderInput = false;
       } else {
-        // No saved state yet: fall back to Flat preset once
         presetSel.value = 'Flat';
         presetSel.onchange();
       }
